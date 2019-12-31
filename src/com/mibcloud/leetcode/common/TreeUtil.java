@@ -6,6 +6,20 @@ import java.util.Queue;
 public class TreeUtil {
     /**
      * 层序建立二叉树
+     *
+     * @param input [-10,-3,0,5,null,9]
+     */
+    public static TreeNode create(String input) {
+        if (input == null) return null;
+        int len = input.length();
+        if (len < 2) return null;
+        if (!input.startsWith("[") || !input.endsWith("]")) return null;
+        String[] nums = input.substring(1, len - 1).split(",");
+        return create(nums);
+    }
+
+    /**
+     * 层序建立二叉树
      */
     public static TreeNode create(String[] nums) {
         if (nums == null || nums.length == 0) return null;
