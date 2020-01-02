@@ -16,58 +16,47 @@ import java.util.*;
  */
 public class LC501 {
     //二叉搜索树与中序遍历有隐含关系
+    //[1,null,2] - > [2,1]
     public int[] findMode(TreeNode root) {
         int[] result = {};
         Map<Integer, Integer> map = new HashMap<>();
         Stack<TreeNode> stack = new Stack<>();
-        stack.push(root);
-        TreeNode cur;
-        while (!stack.isEmpty()) {
-            cur = stack.pop();
-            if (map.containsKey(cur.val)) {
-                map.put(cur.val, map.get(cur.val) + 1);
-            } else {
-                map.put(cur.val, 1);
+        TreeNode cur = root;
+        while (cur != null || !stack.isEmpty()) {
+            while (cur != null) {
+                stack.push(cur);
+                cur = cur.left;
             }
-            if (cur.right != null) {
-                stack.push(cur.right);
-            }
-            if (cur.left != null) {
-                stack.push(cur.left);
-            }
-        }
-        return result;
-    }
-
-    public int[] findMode1(TreeNode root) {
-        int[] result = {};
-        Map<Integer, Integer> map = new HashMap<>();
-        Stack<TreeNode> stack = new Stack<>();
-        stack.push(root);
-        TreeNode cur;
-        while (!stack.isEmpty()) {
-            cur = stack.pop();
-            if (map.containsKey(cur.val)) {
-                map.put(cur.val, map.get(cur.val) + 1);
-            } else {
-                map.put(cur.val, 1);
-            }
-            if (cur.right != null) {
-                stack.push(cur.right);
-            }
-            if (cur.left != null) {
-                stack.push(cur.left);
+            if (!stack.isEmpty()) {
+                //第一个弹出的结点一定是在所有left都入stack后的栈顶元素，
+                //该结点即是上一个结点的left，又是无left的root
+                TreeNode node = stack.pop();
+                if (map.containsKey(node.val)) {
+                    map.put(node.val, map.get(node.val) + 1);
+                } else {
+                    map.put(node.val, 1);
+                }
+                if (node.right != null) {
+                    cur = node.right;
+                }
             }
         }
-        //后续步骤将map排序，然后取最大
         int maxCount = 0;
-        Set<Integer> maxCountSet = new TreeSet<>();
+        List<Integer> maxKeyList = new LinkedList<>();
         for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
             if (entry.getValue() > maxCount) {
+                maxKeyList.clear();
                 maxCount = entry.getValue();
-
+                maxKeyList.add(entry.getKey());
+            } else if (entry.getValue() == maxCount) {
+                maxKeyList.add(entry.getKey());
             }
-            System.out.println("key = " + entry.getKey() + ", value = " + entry.getValue());
+        }
+        if (!maxKeyList.isEmpty()){
+            result = new int[maxKeyList.size()];
+            for (int i = 0; i < maxKeyList.size(); i++) {
+                result[i] = maxKeyList.get(i);
+            }
         }
         return result;
     }
